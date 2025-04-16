@@ -1,0 +1,80 @@
+#include <iostream>
+using namespace std;
+
+class ArrayQueue {
+private:
+    int* arr;
+    int front, rear, capacity;
+
+public:
+    ArrayQueue(int size) {
+        capacity = size;
+        arr = new int[capacity];
+        front = rear = -1;
+    }
+
+    bool isEmpty() {
+        return front == -1;
+    }
+
+    bool isFull() {
+        return (rear + 1) % capacity == front;
+    }
+
+    void enqueue(int val) {
+        if (isFull()) {
+            cout << "Queue is full.\n";
+            return;
+        }
+        if (isEmpty()) {
+            front = rear = 0;
+        } else {
+            rear = (rear + 1) % capacity;
+        }
+        arr[rear] = val;
+    }
+
+    void dequeue() {
+        if (isEmpty()) {
+            cout << "Queue is empty.\n";
+            return;
+        }
+        if (front == rear) {
+            front = rear = -1; // queue becomes empty
+        } else {
+            front = (front + 1) % capacity;
+        }
+    }
+
+    void display() {
+        if (isEmpty()) {
+            cout << "Queue is empty.\n";
+            return;
+        }
+        cout << "Queue: ";
+        int i = front;
+        while (true) {
+            cout << arr[i] << " ";
+            if (i == rear) break;
+            i = (i + 1) % capacity;
+        }
+        cout << "\n";
+    }
+
+    ~ArrayQueue() {
+        delete[] arr;
+    }
+};
+
+int main() {
+    ArrayQueue q(5);
+    q.enqueue(10);
+    q.enqueue(20);
+    q.enqueue(30);
+    q.display();
+
+    q.dequeue();
+    q.display();
+
+    return 0;
+}
