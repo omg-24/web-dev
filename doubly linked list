@@ -1,0 +1,204 @@
+#include <iostream>
+using namespace std;
+
+// Node definition
+class Node {
+public:
+    int data;
+    Node* prev;
+    Node* next;
+
+    Node(int val) {
+        data = val;
+        prev = nullptr;
+        next = nullptr;
+    }
+};
+
+// Doubly Linked List class
+class DoublyLinkedList {
+private:
+    Node* head;
+
+public:
+    DoublyLinkedList() {
+        head = nullptr;
+    }
+
+    // Insert at the beginning
+    void insertAtHead(int val) {
+        Node* newNode = new Node(val);
+        if (head != nullptr) {
+            newNode->next = head;
+            head->prev = newNode;
+        }
+        head = newNode;
+    }
+
+    // Insert at the end
+    void insertAtTail(int val) {
+        Node* newNode = new Node(val);
+        if (head == nullptr) {
+            head = newNode;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next != nullptr) temp = temp->next;
+
+        temp->next = newNode;
+        newNode->prev = temp;
+    }
+
+    // Insert at specific position (0-based index)
+    void insertAtPosition(int pos, int val) {
+        if (pos == 0) {
+            insertAtHead(val);
+            return;
+        }
+
+        Node* newNode = new Node(val);
+        Node* temp = head;
+        for (int i = 0; temp != nullptr && i < pos - 1; i++) {
+            temp = temp->next;
+        }
+
+        if (temp == nullptr) {
+            cout << "Insert failed: Position out of bounds.\n";
+            return;
+        }
+
+        newNode->next = temp->next;
+        newNode->prev = temp;
+
+        if (temp->next != nullptr)
+            temp->next->prev = newNode;
+
+        temp->next = newNode;
+    }
+
+    // Delete from beginning
+    void deleteAtHead() {
+        if (head == nullptr) {
+            cout << "Delete failed: List is empty.\n";
+            return;
+        }
+        Node* del = head;
+        head = head->next;
+        if (head != nullptr)
+            head->prev = nullptr;
+        delete del;
+    }
+
+    // Delete from end
+    void deleteAtTail() {
+        if (head == nullptr) {
+            cout << "Delete failed: List is empty.\n";
+            return;
+        }
+
+        Node* temp = head;
+        if (temp->next == nullptr) {
+            delete temp;
+            head = nullptr;
+            return;
+        }
+
+        while (temp->next != nullptr) temp = temp->next;
+
+        temp->prev->next = nullptr;
+        delete temp;
+    }
+
+    // Delete from specific position (0-based index)
+    void deleteAtPosition(int pos) {
+        if (head == nullptr) {
+            cout << "Delete failed: List is empty.\n";
+            return;
+        }
+
+        if (pos == 0) {
+            deleteAtHead();
+            return;
+        }
+
+        Node* temp = head;
+        for (int i = 0; temp != nullptr && i < pos; i++) {
+            temp = temp->next;
+        }
+
+        if (temp == nullptr) {
+            cout << "Delete failed: Position out of bounds.\n";
+            return;
+        }
+
+        if (temp->prev != nullptr)
+            temp->prev->next = temp->next;
+        if (temp->next != nullptr)
+            temp->next->prev = temp->prev;
+
+        delete temp;
+    }
+
+    // Display from head to tail
+    void displayForward() {
+        Node* temp = head;
+        cout << "Forward: ";
+        while (temp != nullptr) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << "\n";
+    }
+
+    // Display from tail to head
+    void displayBackward() {
+        Node* temp = head;
+        if (temp == nullptr) {
+            cout << "Backward: List is empty.\n";
+            return;
+        }
+
+        while (temp->next != nullptr)
+            temp = temp->next;
+
+        cout << "Backward: ";
+        while (temp != nullptr) {
+            cout << temp->data << " ";
+            temp = temp->prev;
+        }
+        cout << "\n";
+    }
+
+    // Destructor to free memory
+    ~DoublyLinkedList() {
+        Node* temp;
+        while (head != nullptr) {
+            temp = head;
+            head = head->next;
+            delete temp;
+        }
+    }
+};
+
+// Test the operations
+int main() {
+    DoublyLinkedList dll;
+
+    dll.insertAtHead(10);
+    dll.insertAtHead(5);
+    dll.insertAtTail(20);
+    dll.insertAtPosition(1, 15);
+    dll.displayForward();   // 5 15 10 20
+    dll.displayBackward();  // 20 10 15 5
+
+    dll.deleteAtHead();
+    dll.displayForward();   // 15 10 20
+
+    dll.deleteAtTail();
+    dll.displayForward();   // 15 10
+
+    dll.deleteAtPosition(1);
+    dll.displayForward();   // 15
+
+    return 0;
+}
