@@ -78,3 +78,67 @@ int main() {
 
     return 0;
 }
+
+
+
+
+
+
+//queue using two stack
+#include <iostream>
+#include <stack>
+using namespace std;
+
+class Queue {
+    stack<int> inStack, outStack;
+
+    // Transfer elements from inStack to outStack
+    void transfer() {
+        while (!inStack.empty()) {
+            outStack.push(inStack.top());
+            inStack.pop();
+        }
+    }
+
+public:
+    void enqueue(int x) {
+        inStack.push(x);
+    }
+
+    void dequeue() {
+        if (outStack.empty()) {
+            if (inStack.empty()) {
+                cout << "Queue is empty!\n";
+                return;
+            }
+            transfer();
+        }
+        outStack.pop();
+    }
+
+    int front() {
+        if (outStack.empty()) {
+            if (inStack.empty()) {
+                cout << "Queue is empty!\n";
+                return -1;
+            }
+            transfer();
+        }
+        return outStack.top();
+    }
+
+    bool empty() {
+        return inStack.empty() && outStack.empty();
+    }
+};
+
+int main() {
+    Queue q;
+    q.enqueue(10);
+    q.enqueue(20);
+    q.enqueue(30);
+    cout << "Front element: " << q.front() << endl; // 10
+    q.dequeue();
+    cout << "Front after dequeue: " << q.front() << endl; // 20
+    return 0;
+}
