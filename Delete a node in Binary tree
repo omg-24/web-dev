@@ -1,0 +1,102 @@
+#include <iostream>
+#include <queue>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+    
+    Node(int val) : data(val), left(nullptr), right(nullptr) {}
+};
+
+// Function to perform in-order traversal
+void inorder(Node* root) {
+    if (!root) return;
+    inorder(root->left);
+    cout << root->data << " ";
+    inorder(root->right);
+}
+
+// Deletes the deepest node
+void deleteDeepest(Node* root, Node* d_node) {
+    queue<Node*> q;
+    q.push(root);
+
+    while (!q.empty()) {
+        Node* temp = q.front();
+        q.pop();
+
+        if (temp->left) {
+            if (temp->left == d_node) {
+                delete temp->left;
+                temp->left = nullptr;
+                return;
+            } else q.push(temp->left);
+        }
+
+        if (temp->right) {
+            if (temp->right == d_node) {
+                delete temp->right;
+                temp->right = nullptr;
+                return;
+            } else q.push(temp->right);
+        }
+    }
+}
+
+// Deletes a node with given key
+Node* deleteNode(Node* root, int key) {
+    if (!root) return nullptr;
+
+    if (!root->left && !root->right) {
+        if (root->data == key) {
+            delete root;
+            return nullptr;
+        }
+        return root;
+    }
+
+    queue<Node*> q;
+    q.push(root);
+
+    Node* temp;
+    Node* keyNode = nullptr;
+
+    while (!q.empty()) {
+        temp = q.front(); q.pop();
+
+        if (temp->data == key) keyNode = temp;
+
+        if (temp->left) q.push(temp->left);
+        if (temp->right) q.push(temp->right);
+    }
+
+    if (keyNode) {
+        int x = temp->data; // deepest node data
+        deleteDeepest(root, temp);
+        keyNode->data = x;
+    }
+
+    return root;
+}
+
+int main() {
+    Node* root = new Node(10);
+    root->left = new Node(11);
+    root->left->left = new Node(7);
+    root->left->right = new Node(12);
+    root->right = new Node(9);
+    root->right->left = new Node(15);
+    root->right->right = new Node(8);
+
+    cout << "Inorder before deletion: ";
+    inorder(root);
+
+    int key = 11;
+    root = deleteNode(root, key);
+
+    cout << "\nInorder after deletion: ";
+    inorder(root);
+    return 0;
+}
